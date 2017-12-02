@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+  </head>
+  <body>
+    <h1 id="PrimerElemento">Hola mundo</h1>
+    <button onclick="decirHora()" >Decir Hora</button>
+  </body>
+</html>
+
+<script>
+
+  function cambiarTitulo(mensajeDelTitulo){
+    var elementoH1 = document.getElementById("PrimerElemento");
+    elementoH1.innerHTML = mensajeDelTitulo;
+  }
+
+  function decirHora(){
+    var date = new Date();
+    var dateString = date.toString();
+    cambiarTitulo(dateString);
+  }
+
+</script>
