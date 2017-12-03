@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+      .elementoRojo{
+        color: red
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <head>
     <meta charset="utf-8">
     <title>title</title>
   </head>
   <body>
     <h1 id="PrimerElemento">Hola mundo</h1>
-    <button onclick="decirHora()" >Decir Hora</button>
+    <button id="BotonHora">Decir Hora</button>
   </body>
 </html>
 
@@ -22,5 +28,35 @@
     var dateString = date.toString();
     cambiarTitulo(dateString);
   }
+
+  $("#BotonHora").click(function(){
+
+    decirHora();
+
+    $("#PrimerElemento").show();
+
+    setTimeout(function(){
+      $("#PrimerElemento").hide();
+    },3000);
+
+  })
+
+
+  $("#PrimerElemento").hide();
+
+  $.get("http://localhost:5000/api/product",function(productos){
+    productos.forEach(function(producto){
+      console.log(producto.title);
+    })
+  });
+
+  function traerDatosDelServidor(){
+    $.get("http://localhost:5000/api/product",function(productos){
+    productos.forEach(function(producto){
+        console.log(producto.title);
+      })
+    });
+  }
+
 
 </script>
