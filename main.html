@@ -1,18 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-    <style>
-      .elementoRojo{
-        color: red
-      }
-    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>  
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <head>
     <meta charset="utf-8">
     <title>title</title>
   </head>
   <body>
     <h1 id="PrimerElemento">Hola mundo</h1>
     <button id="BotonHora">Decir Hora</button>
+    <fieldset>
+      <legend>FormularioDeProducto</legend>
+      <label for="Nombre">Nombre Del Producto</label>
+      <input id="Nombre" type="text">
+      <label for="Precio Del Producto">Nombre Del Producto</label>
+      <input id="Precio" type="text">
+      <button id="Guardar">Guardar Producto</button>
+    </fieldset>
+
+
+
+
+
+    <table id="TablaDeProductos" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+    </table>
+
+
+
+
+
+
   </body>
 </html>
 
@@ -41,21 +70,67 @@
 
   })
 
-
   $("#PrimerElemento").hide();
 
-  $.get("http://localhost:5000/api/product",function(productos){
-    productos.forEach(function(producto){
-      console.log(producto.title);
-    })
+
+
+  var tablaDeProductos;
+  $(document).ready(function () {
+        tablaDeProductos = $('table').DataTable();
+        traerDatosDelServidor();
   });
 
   function traerDatosDelServidor(){
     $.get("http://localhost:5000/api/product",function(productos){
-    productos.forEach(function(producto){
-        console.log(producto.title);
+      productos.forEach(function(producto){
+        AgregarProductoATabla(producto);
       })
+      tablaDeProductos.draw();
     });
+  }
+
+  function AgregarProductoATabla(producto) {
+        tablaDeProductos.row.add(
+                    [
+                        producto.id,
+                        producto.title,
+                        producto.price
+                    ]
+        );
+  }
+
+
+  $("#Guardar").click(function(){
+    var producto = sacarProducto();
+    $.ajax({
+        headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+        },
+        type: "POST",
+        url: "http://localhost:5000/api/product",
+        crossDomain: true,
+        dataType : 'json',
+        data: JSON.stringify(producto),
+        success: function (producto) {
+          AgregarProductoATabla(producto);
+          tablaDeProductos.draw();
+          limpiarFormularioDeProducto();
+        }
+    });
+  });
+
+  function sacarProducto(){
+    return {
+      Title : $("#Nombre").val(),
+      Price : $("#Precio").val()
+    }
+
+  }
+
+  function limpiarFormularioDeProducto(){
+    $("#Nombre").val("");
+    $("#Precio").val("");
   }
 
 
